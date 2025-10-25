@@ -4,7 +4,8 @@ import java.util.*;
 
 public class AoC_2024_02 {
     public static void main(String[] args) {
-        File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_02.txt");
+        //File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_02.txt");
+        File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2024_02.txt");
 
         ArrayList<ArrayList<Integer>> diffLevels = new ArrayList<ArrayList<Integer>>();
         try (Scanner myReader = new Scanner(myObj)) {
@@ -25,37 +26,55 @@ public class AoC_2024_02 {
         }
 
         //System.out.println(diffLevels);
-        boolean incre = true;
-        boolean skip = false;
         int safes = 0;
         for (int j = 0; j < diffLevels.size(); j++) {
-            for (int k = 1; k < diffLevels.get(j).size(); k++) {
-                int prev = diffLevels.get(j).get(k-1);
-                int now = diffLevels.get(j).get(k);
-                if (Math.abs(now - prev) < 4 && now != prev) {
-                    if (k == 1) {
-                        incre = checkInc(prev, now);
-                    } else {
-                        if (incre != checkInc(prev, now)) {
-                            skip = true;
-                            break;
-                        }
-                    }
-                } else {
-                    skip = true;
-                    break;
+            if (!checkSafe(diffLevels.get(j))) {
+                if (!checkSafeWithDamp(diffLevels.get(j))) {
+                    continue;
                 }
-            }
-            if (skip) {
-                skip = false;
-                continue;
             }
             safes++;
         }
-        System.out.println(safes);
+        System.out.println(safes);  
+    }
+
+    //Part 1
+    public static boolean checkSafe(ArrayList<Integer> levels) {
+        boolean incre = true;
+        boolean safe = true;
+        for (int k = 1; k < levels.size(); k++) {
+            int prev = levels.get(k-1);
+            int now = levels.get(k);
+            if (Math.abs(now - prev) < 4 && now != prev) {
+                if (k == 1) {
+                    incre = checkInc(prev, now);
+                } else {
+                    if (incre != checkInc(prev, now)) {
+                        safe = false;
+                        break;
+                    }
+                }
+            } else {
+                safe = false;
+                break;
+            }
+        }
+        return safe;
     }
 
     public static boolean checkInc(int a, int b) {
         return a < b;
-    } 
+    }
+
+    //Part 2
+    public static boolean checkSafeWithDamp(ArrayList<Integer> levels) {
+        for (int a = 0; a < levels.size(); a++) {
+            ArrayList<Integer> modifiedLevels = new ArrayList<Integer>(levels);
+            modifiedLevels.remove(a);
+            if (checkSafe(modifiedLevels)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
