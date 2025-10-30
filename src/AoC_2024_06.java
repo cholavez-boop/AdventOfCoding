@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -30,26 +31,39 @@ public class AoC_2024_06 {
             e.printStackTrace();
         }
 
-        showMap(mapOfLab, false);
-        showMap(reflectedMap(mapOfLab), false);
+        //showMap(mapOfLab, false);
+        //showMap(reflectedMap(mapOfLab), false);
 
         //Part 1
-        System.out.println("Total Moves: " + totalMovement(mapOfLab, startPoint));
+        //System.out.println("Total Moves: " + totalMovement(mapOfLab, startPoint, true));
         //Part 2
         //showMap(reflectedMap(mapOfLab), true);
+        System.out.println("Total Loops: " + totalMovement(mapOfLab, startPoint, false));
     }
 
     //Part 1
-    public static int totalMovement(HashMap<Integer, String> labMap, int[] pos) {
+    public static int totalMovement(HashMap<Integer, String> labMap, int[] pos, boolean part1) {
         int moves = 0;
         int boundsRow = labMap.size();
         int boundsCol = labMap.get(0).length();
         boolean inLab = true;
+        int loops = 0;
+        int giveUpVal = 0;
+        boolean giveUp = false;
 
         System.out.println("Beginning Simulation... " + boundsCol + "x" + boundsRow);
-        while (inLab) {
+        while (inLab && !giveUp) {
+            giveUpVal++;
+            if (giveUpVal > 10000) {
+                System.out.println("Found a loop!");
+                return giveUpVal;
+            }
+            if (!part1 && checkLoop(labMap, pos)) {
+                loops++;
+                System.out.println(loops);
+            }
             if (labMap.get(pos[0]).charAt(pos[1]) == '^') {
-                while (pos[0] > -1) {
+                //while (pos[0] > -1) {
                     if (pos[0]-1 < 0) {
                         System.out.println("Exited at the top");
                         moves++;
@@ -60,7 +74,7 @@ public class AoC_2024_06 {
                         StringBuilder sb = new StringBuilder(labMap.get(pos[0]));
                         sb.setCharAt(pos[1], '>');
                         labMap.replace(pos[0], sb.toString());
-                        break;
+                        //break;
                     } else {
                         if (labMap.get(pos[0]-1).charAt(pos[1]) == '.') {
                             moves++;
@@ -71,9 +85,9 @@ public class AoC_2024_06 {
                         marked = labMap.get(pos[0]).substring(0, pos[1]) + "^" + labMap.get(pos[0]).substring(pos[1]+1);
                         labMap.replace(pos[0], marked);
                     }
-                }
+                //}
             } else if (labMap.get(pos[0]).charAt(pos[1]) == 'v') {
-                while (pos[0] < boundsRow) {
+                //while (pos[0] < boundsRow) {
                     if (pos[0]+1 >= boundsRow) {
                         System.out.println("Exited at the bottom");
                         moves++;
@@ -84,7 +98,7 @@ public class AoC_2024_06 {
                         StringBuilder sb = new StringBuilder(labMap.get(pos[0]));
                         sb.setCharAt(pos[1], '<');
                         labMap.replace(pos[0], sb.toString());
-                        break;
+                        //break;
                     } else {
                         if (labMap.get(pos[0]+1).charAt(pos[1]) == '.') {
                             moves++;
@@ -95,9 +109,9 @@ public class AoC_2024_06 {
                         marked = labMap.get(pos[0]).substring(0, pos[1]) + "v" + labMap.get(pos[0]).substring(pos[1]+1);
                         labMap.replace(pos[0], marked);
                     }
-                }
+                //}
             } else if (labMap.get(pos[0]).charAt(pos[1]) == '<') {
-                while (pos[1] > -1) {
+                //while (pos[1] > -1) {
                     if (pos[1]-1 < 0) {
                         System.out.println("Exited at the left");
                         moves++;
@@ -108,7 +122,7 @@ public class AoC_2024_06 {
                         StringBuilder sb = new StringBuilder(labMap.get(pos[0]));
                         sb.setCharAt(pos[1], '^');
                         labMap.replace(pos[0], sb.toString());
-                        break;
+                        //break;
                     } else {
                         if (labMap.get(pos[0]).charAt(pos[1]-1) == '.') {
                             moves++;
@@ -119,9 +133,9 @@ public class AoC_2024_06 {
                         sb.setCharAt(pos[1]+1, 'X');
                         labMap.replace(pos[0], sb.toString());
                     }
-                }
+                //}
             } else if (labMap.get(pos[0]).charAt(pos[1]) == '>') {
-                while (pos[1] < boundsCol) {
+                //while (pos[1] < boundsCol) {
                     if (pos[0]+1 >= boundsCol) {
                         System.out.println("Exited at the right");
                         moves++;
@@ -132,7 +146,7 @@ public class AoC_2024_06 {
                         StringBuilder sb = new StringBuilder(labMap.get(pos[0]));
                         sb.setCharAt(pos[1], 'v');
                         labMap.replace(pos[0], sb.toString());
-                        break;
+                        //break;
                     } else {
                         if (labMap.get(pos[0]).charAt(pos[1]+1) == '.') {
                             moves++;
@@ -143,67 +157,111 @@ public class AoC_2024_06 {
                         sb.setCharAt(pos[1]-1, 'X');
                         labMap.replace(pos[0], sb.toString());
                     }
-                }
+                //}
             } else {
                 System.out.println("Error: Invalid Direction " + Arrays.toString(pos));
                 inLab = false;
                 showMap(labMap, true);
                 break;
             }
+            //showMap(labMap, false);
         }
-        showMap(labMap, false);
+        //showMap(labMap, false);
 
-        return moves;
+        if (part1) {
+            return moves;
+        } else {
+            return loops;
+        }
     }
 
     public static void showMap(HashMap<Integer, String> map, boolean showRowNum) {
+        if (!showRowNum) {
+            clearScreen();
+        }
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
             if (showRowNum) {
-                System.out.println(entry.getKey() + " = " + entry.getValue());
+                String xyz = "";
+                if (entry.getKey() < 10) {
+                    xyz = "00";
+                } else if (entry.getKey() < 100) {
+                    xyz = "0";
+                }
+                System.out.println(xyz + entry.getKey() + " = " + entry.getValue());
             } else {
                 System.out.println(entry.getValue());
             }
         }
     }
 
-    //Part 2
-    public static boolean findLoops(HashMap<Integer, String> labMap, int[][] pos, char sentry) {
-        Pattern p = Pattern.compile("(<|.)X+(.|>)");
-        if (sentry == '^') {
-            //>
-        } else if (sentry == '>') {
-            //v
-        } else if (sentry == 'v') {
-            //<
-        } else if (sentry == '<') {
-            //^
-        } else {
-            System.out.println("Did not find guard");
-            return false;
+    public static void clearScreen() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033\143");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-        return false;
     }
 
-    public static HashMap<Integer, String> reflectedMap(HashMap<Integer, String> labMap) {
-        HashMap<Integer, String> newMap = new HashMap<>();
-        for (int i = 0; i < labMap.get(0).length(); i++) {
-            StringBuilder colBuilder = new StringBuilder();
-            for (int j = 0; j < labMap.size(); j++) {
-                char elem = labMap.get(j).charAt(i);
-                if (elem == '^') {
-                    elem = '<';
-                } else if (elem == '<') {
-                    elem = '^';
-                } else if (elem == 'v') {
-                    elem = '>';
-                } else if (elem == '>') {
-                    elem = 'v';
-                }
-                colBuilder.append(elem);
-            }
-            newMap.put(i, colBuilder.toString());
+    //Part 2
+    public static boolean checkLoop(HashMap<Integer, String> labMap, int[] pos) {
+        System.out.println("Checking if loop");
+        showMap(labMap, true);
+        StringBuilder sb;
+        char sentry = labMap.get(pos[0]).charAt(pos[1]);
+        if (sentry == '^' && labMap.get(pos[0]-1).charAt(pos[1]) != '#') {
+            sb = new StringBuilder(labMap.get(pos[0]-1));
+            sb.setCharAt(pos[1], '#');
+            labMap.replace(pos[0]-1, sb.toString());
+        } else if (sentry == '>' && labMap.get(pos[0]).charAt(pos[1]+1) != '#') {
+            sb = new StringBuilder(labMap.get(pos[0]));
+            sb.setCharAt(pos[1]+1, '#');
+            labMap.replace(pos[0], sb.toString());
+        } else if (sentry == 'v' && labMap.get(pos[0]+1).charAt(pos[1]) != '#') {
+            sb = new StringBuilder(labMap.get(pos[0]+1));
+            sb.setCharAt(pos[1], '#');
+            labMap.replace(pos[0]+1, sb.toString());
+        } else if (sentry == '<' && labMap.get(pos[0]).charAt(pos[1]-1) != '#') {
+            sb = new StringBuilder(labMap.get(pos[0]));
+            sb.setCharAt(pos[1]-1, '#');
+            labMap.replace(pos[0], sb.toString());
+        } else {
+            System.out.println("Did not find guard. Maybe he left?");
+            return false;
         }
-        return newMap;
+        if (totalMovement(labMap, pos, true) >= 10000) {
+            System.out.println("Loop confirmed");
+            //showMap(labMap, true);
+            return true;
+        } else {
+            System.out.println("No Loop");
+            return false;
+        }
     }
+
+    // public static HashMap<Integer, String> reflectedMap(HashMap<Integer, String> labMap) {
+    //     HashMap<Integer, String> newMap = new HashMap<>();
+    //     for (int i = 0; i < labMap.get(0).length(); i++) {
+    //         StringBuilder colBuilder = new StringBuilder();
+    //         for (int j = 0; j < labMap.size(); j++) {
+    //             char elem = labMap.get(j).charAt(i);
+    //             if (elem == '^') {
+    //                 elem = '<';
+    //             } else if (elem == '<') {
+    //                 elem = '^';
+    //             } else if (elem == 'v') {
+    //                 elem = '>';
+    //             } else if (elem == '>') {
+    //                 elem = 'v';
+    //             }
+    //             colBuilder.append(elem);
+    //         }
+    //         newMap.put(i, colBuilder.toString());
+    //     }
+    //     return newMap;
+    // }
 }
 
