@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 
 public class AoC_2024_06 {
     public static void main(String[] args) {
-        //File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_06.txt");
-        File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2024_06.txt");
+        File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_06.txt");
+        //File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2024_06.txt");
 
         HashMap<Integer, String> mapOfLab = new HashMap<>();
         int[] startPoint = new int[2];
@@ -23,6 +23,7 @@ public class AoC_2024_06 {
                     startPoint[1] = m.start();
                 }
                 iter++;
+            
             }
         } catch (FileNotFoundException e) {
             System.out.println("Something went wrong.");
@@ -30,10 +31,12 @@ public class AoC_2024_06 {
         }
 
         showMap(mapOfLab, false);
+        showMap(reflectedMap(mapOfLab), false);
 
         //Part 1
         System.out.println("Total Moves: " + totalMovement(mapOfLab, startPoint));
         //Part 2
+        //showMap(reflectedMap(mapOfLab), true);
     }
 
     //Part 1
@@ -164,9 +167,43 @@ public class AoC_2024_06 {
     }
 
     //Part 2
-    public static int findLoops(HashMap<Integer, String> labMap, int[][] pos) {
+    public static boolean findLoops(HashMap<Integer, String> labMap, int[][] pos, char sentry) {
+        Pattern p = Pattern.compile("(<|.)X+(.|>)");
+        if (sentry == '^') {
+            //>
+        } else if (sentry == '>') {
+            //v
+        } else if (sentry == 'v') {
+            //<
+        } else if (sentry == '<') {
+            //^
+        } else {
+            System.out.println("Did not find guard");
+            return false;
+        }
+        return false;
+    }
 
-        return 0;
+    public static HashMap<Integer, String> reflectedMap(HashMap<Integer, String> labMap) {
+        HashMap<Integer, String> newMap = new HashMap<>();
+        for (int i = 0; i < labMap.get(0).length(); i++) {
+            StringBuilder colBuilder = new StringBuilder();
+            for (int j = 0; j < labMap.size(); j++) {
+                char elem = labMap.get(j).charAt(i);
+                if (elem == '^') {
+                    elem = '<';
+                } else if (elem == '<') {
+                    elem = '^';
+                } else if (elem == 'v') {
+                    elem = '>';
+                } else if (elem == '>') {
+                    elem = 'v';
+                }
+                colBuilder.append(elem);
+            }
+            newMap.put(i, colBuilder.toString());
+        }
+        return newMap;
     }
 }
 
