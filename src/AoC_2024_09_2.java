@@ -5,8 +5,8 @@ import java.util.*;
 public class AoC_2024_09_2 {
     
     public static void main(String[] args) {
-        //File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_09.txt");
-        File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2024_09.txt");
+        File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_09.txt");
+        // File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2024_09.txt");
 
         String input = new String();
         try (Scanner myReader = new Scanner(myObj)) {
@@ -36,21 +36,17 @@ public class AoC_2024_09_2 {
 
     //Part 2
     public static ArrayList<String> decodeString(String input) {
-        HashMap<Integer, ArrayList<Integer>> files = new HashMap<>(); // Starting index, file length
+        HashMap<Integer, ArrayList<Integer>> files = new HashMap<>(); // Starting index, file/space size
         HashMap<Integer, ArrayList<Integer>> space = new HashMap<>();
         boolean file = false;
-        // !storeFiles;
         int idxFile = 0;
         int idxTota = 0;
         for (int i = 0; i < input.length(); i++) {
             file = !file;
             ArrayList<Integer> info = new ArrayList<>();
-            // ArrayList<Integer> spaceInfo = new ArrayList<>();
             int amt = Integer.parseInt(String.valueOf(input.charAt(i)));
             info.add(idxTota);
             info.add(amt);
-            // info.add(file ? 1 : 0);
-            // decode.put(idxFile, info);
             // System.out.println(idxFile + ": " + info);
             if (file) {
                 files.put(idxFile, info);
@@ -74,42 +70,43 @@ public class AoC_2024_09_2 {
             });
         });
 
-        return compactFiles(files, space, idxTota + Integer.parseInt(String.valueOf(input.charAt(input.length()-1))));
+        return compactFiles(files, space, idxTota);
     }
 
-    // In the works
     public static ArrayList<String> compactFiles(
         HashMap<Integer, ArrayList<Integer>> files,
         HashMap<Integer, ArrayList<Integer>> spaces,
         int maxIndex) {
+        int newSpaceIdx = files.size()-1;
         for (int z = files.size()-1; z >= 0; z--) {
             //9999 -> 0
-            for (int a = 0; a < spaces.size(); a++) {
-                //0 -> 9998
+            for (int a = 0; a < z; a++) {
+                //0 -> z
                 if (spaces.containsKey(a) &&
-                    spaces.get(a).get(1) > files.get(z).get(1) &&
+                    spaces.get(a).get(1) >= files.get(z).get(1) &&
                     spaces.get(a).get(0) < files.get(z).get(0)) {
-                    //Logic
                     // System.out.println("Moving " + z + ": " + files.get(z));
                     int pastIndex = files.get(z).get(0);
                     int moveIndex = spaces.get(a).get(0);
                     int fileSize = files.get(z).get(1);
                     ArrayList<Integer> replacementList = new ArrayList<>();
-                    ArrayList<Integer> replacementSpace = new ArrayList<>();
                     ArrayList<Integer> pastFileToSpace = new ArrayList<>();
                     replacementList.add(moveIndex);
                     replacementList.add(fileSize);
                     files.replace(z, replacementList);
-                    replacementSpace.add(spaces.get(a).get(0)+fileSize);
-                    // int errorInt = spaces.get(a).get(1) - fileSize;
-                    // if (errorInt < 1) {
-                    //     System.out.println("ERROR! INT IS < 0");
-                    // }
-                    replacementSpace.add(spaces.get(a).get(1)-fileSize);
-                    spaces.replace(a, replacementSpace);
+                    int newSpaceSize = spaces.get(a).get(1) - fileSize;
+                    if (newSpaceSize > 0 ) {
+                        ArrayList<Integer> replacementSpace = new ArrayList<>();
+                        replacementSpace.add(spaces.get(a).get(0)+fileSize);
+                        replacementSpace.add(newSpaceSize);
+                        spaces.replace(a, replacementSpace);
+                    } else if (newSpaceSize == 0) {
+                        spaces.remove(a);
+                    }
                     pastFileToSpace.add(pastIndex);
                     pastFileToSpace.add(fileSize);
-                    spaces.put(-a, pastFileToSpace);
+                    spaces.put(newSpaceIdx, pastFileToSpace);
+                    newSpaceIdx++;
                     break;
                     /*
                      * [00, 3] SPACE
@@ -134,31 +131,19 @@ public class AoC_2024_09_2 {
         HashMap<Integer, ArrayList<Integer>> spaces,
         int maxIndex) {
         ArrayList<String> finalArray = new ArrayList<>();
-
         HashMap<Integer, ArrayList<Integer>> stringAsMap = new HashMap<>();
-        for (int i = 0; i < files.size(); i++) {
-            // if (!files.containsKey(i)) {
-            //     continue;
-            // }
+        files.forEach((k, v) -> {
             ArrayList<Integer> newArray = new ArrayList<>();
-            newArray.add(i);
-            newArray.add(files.get(i).get(1));
-            // System.out.println(i + ": " + files.get(i) + " -> " + files.get(i).get(0) + ": " + newArray);
-            stringAsMap.put(files.get(i).get(0), newArray);
-        }
-        for (int i = -spaces.size(); i <= spaces.size(); i++) {
-            if (!spaces.containsKey(i)) {
-                continue;
-            }
+            newArray.add(k);
+            newArray.add(v.get(1));
+            stringAsMap.put(v.get(0), newArray);
+        });
+        spaces.forEach((k, v) -> {
             ArrayList<Integer> newArray = new ArrayList<>();
             newArray.add(-1);
-            newArray.add(spaces.get(i).get(1));
-            // System.out.println(i + ": " + spaces.get(i) + " -> " + spaces.get(i).get(0) + ": " + newArray);
-            // if (stringAsMap.containsKey(spaces.get(i).get(0))) {
-            //     System.out.println("Duplicate!");
-            // }
-            stringAsMap.put(spaces.get(i).get(0), newArray);
-        }
+            newArray.add(v.get(1));
+            stringAsMap.put(v.get(0), newArray);
+        });
 
         // System.out.println(stringAsMap);
 
@@ -187,6 +172,9 @@ public class AoC_2024_09_2 {
 
     /*
      * GUESSES
+     * 6272188244509 RIGHT
+     * 2422398287070 WRONG
+     * 8098005236667 WRONG
      * 8081431669194 WRONG
      * 7737040638294 WRONG
      * 7717157016000 WRONG
