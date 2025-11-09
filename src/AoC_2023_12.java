@@ -65,6 +65,26 @@ public class AoC_2023_12 {
     }
 
     public static String reducePos(String string, ArrayList<Integer> notes) {
+        //LEFT
+        /*
+         * if . then just copy it
+         * if # then
+         *      take note of char beside it
+         * if ? then
+         *      try 
+         */
+        for (int i = 0; i < string.length(); i++) {
+            char currChar = string.charAt(i);
+            if (currChar == '.') {
+                // logic .
+            } else if (currChar == '#') {
+                // logic #
+            } else if (currChar == '?') {
+                // logic ?
+            } else {
+                System.out.println("ERROR! Found a " + currChar);
+            }
+        }
         for (int h : notes) {
             if (h == 1) {continue;}
             StringBuilder regex = new StringBuilder();
@@ -79,6 +99,17 @@ public class AoC_2023_12 {
         }
         return string;
     }
+
+    /*
+     * .??????##????.???#.?: [2, 8, 2, 1]
+     * 
+     * .??????##????.???#.? ORIGINAL
+     * ..##.########...##.# RIGHT
+     * .##.########..##.#.. LEFT
+     * .?#??#######?.???#.? REDUCED
+     * Others
+     * .##..########.##.#..
+     */
     
     public static int getNumOfPos(String inp, ArrayList<Integer> pattern) {
         StringBuilder regex = new StringBuilder();

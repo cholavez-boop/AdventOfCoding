@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Pratice {
     public static void main(String[] args) {
         countOneToHundred(true);
@@ -16,5 +18,18 @@ public class Pratice {
     public static void modifyCount(int count) {
         System.out.println("Modify Count at: " + count);
         countOneToHundred(false);
+    }
+
+    public static void test() {
+        ArrayList<String> testStrings = new ArrayList<>();
+        testStrings.add("one");
+        testStrings.add("two");
+        testStrings.add("three");
+        testStrings.add("four");
+
+        System.out.println(testStrings);
+        String testing = testStrings.remove(2);
+        System.out.println(testing);
+        System.out.println(testStrings);
     }
 }
