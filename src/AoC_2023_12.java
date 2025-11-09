@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 public class AoC_2023_12 {
     public static void main(String[] args) {
-        File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2023_12.txt");
-        // File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2023_12.txt");
+        // File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2023_12.txt");
+        File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2023_12.txt");
 
         //Read File
         ArrayList<ArrayList<String>> input = new ArrayList<>();
@@ -48,7 +48,8 @@ public class AoC_2023_12 {
         // Show processed input & find num of possible combos
         int totalPos = 0;
         for (String str : keys) {
-            totalPos += getNumOfPos(str, springs.get(str));
+            reducePos(str, springs.get(str));
+            // totalPos += getNumOfPos(str, springs.get(str));
         }
 
         System.out.println("Sum: " + totalPos);
@@ -63,6 +64,22 @@ public class AoC_2023_12 {
         return intsList;
     }
 
+    public static String reducePos(String string, ArrayList<Integer> notes) {
+        for (int h : notes) {
+            if (h == 1) {continue;}
+            StringBuilder regex = new StringBuilder();
+            for (int i = 0; i < h; i++) {
+                regex.append('#');
+            }
+            Pattern p = Pattern.compile(regex.toString());
+            Matcher m = p.matcher(string);
+            if (m.find()) {
+                System.out.println(h + " is in " + string + ": " + notes);
+            }
+        }
+        return string;
+    }
+    
     public static int getNumOfPos(String inp, ArrayList<Integer> pattern) {
         StringBuilder regex = new StringBuilder();
         regex.append(".*");
