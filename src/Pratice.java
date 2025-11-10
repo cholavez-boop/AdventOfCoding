@@ -2,7 +2,8 @@ import java.util.ArrayList;
 
 public class Pratice {
     public static void main(String[] args) {
-        countOneToHundred(true);
+        // countOneToHundred(true);
+        graphDigits(600);
     }
 
     public static void countOneToHundred(boolean insert) {
@@ -31,5 +32,13 @@ public class Pratice {
         String testing = testStrings.remove(2);
         System.out.println(testing);
         System.out.println(testStrings);
+    }
+
+    public static void graphDigits(int times) {
+        for (int i = 1; i < times+1; i++) {
+            int prod = 2024 * i;
+            String prodDigits = String.valueOf(prod);
+            System.out.print(prodDigits.length()%2 == 0 ? 2 : 1);
+        }
     }
 }

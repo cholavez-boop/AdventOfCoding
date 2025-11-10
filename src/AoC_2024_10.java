@@ -60,6 +60,7 @@ public class AoC_2024_10 {
     }
 
     public static int getScore(ArrayList<ArrayList<Integer>> map, ArrayList<Integer> trailhead) {
+        // for Part 2, just comment out anything that uses visited array
         int score = 0;
         ArrayList<ArrayList<Integer>> nextStep = new ArrayList<>();
         ArrayList<ArrayList<Integer>> visited = new ArrayList<>();
@@ -127,5 +128,6 @@ public class AoC_2024_10 {
     /*
      * GUESSES
      * 1706 TOO HIGH
+     * 794 CORRECT
      */
 }
