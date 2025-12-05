@@ -6,36 +6,7 @@ import java.util.*;
 
 public class AoC_2024_11 {
     public static void main(String[] args) {
-        File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2024_11.txt");
-        // String[] splitInput = input.split("\s");
-        // ArrayList<Long> plutoStones = new ArrayList<>();
-        int numOfBlinks = 35;
-        Long reallyBigNum = 841729134425L;
-        int index = 0;
-
-        try (Scanner myReader = new Scanner(myObj)) {
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                // System.out.println(data);
-                if (index <= 376408) {
-                    index++;
-
-                    continue;
-                }
-                ArrayList<Long> plutoStone = new ArrayList<>();
-                plutoStone.add(Long.parseLong(data));
-                for (int b = 0; b < numOfBlinks; b++) {
-                    plutoStone = blink(plutoStone);
-                }
-                reallyBigNum += plutoStone.size();
-                System.out.println("Currenlty: " + index + " -> " + reallyBigNum);
-                index++;
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Something went wrong.");
-            e.printStackTrace();
-        }
-        // String input = "2 77706 5847 9258441 0 741 883933 12";
+        String input = "2 77706 5847 9258441 0 741 883933 12";
         /*
          * If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
          * If the stone is engraved with a number that has an even number of digits, it is replaced by two stones.
@@ -139,18 +110,4 @@ public class AoC_2024_11 {
      * 190865 CORRECT
      * 6521701160 - 50 blinks
      */
-
-     public static void writeToFile(ArrayList<Long> plutoStones) {
-        try {
-            FileWriter w = new FileWriter("AOC2024_11.txt");
-            for (Long l : plutoStones) {
-                w.write(String.valueOf(l)+"\n");
-            }
-            w.close();
-            System.out.println("Saved to AOC2024_11.");
-        } catch (IOException e) {
-            System.out.println("Whoops!");
-            e.printStackTrace();
-        }
-     }
 }
