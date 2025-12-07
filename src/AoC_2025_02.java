@@ -42,43 +42,41 @@ public class AoC_2025_02 {
             fullRange[0] = "10";
         }
         do {
-            if (secLen == 1) {
-                section = String.valueOf(fullRange[0].charAt(0));
-            } else {
-                section = fullRange[0].substring(0, secLen-1);
-            }
-            boolean inRange = true;
-            while (inRange) {
-                StringBuilder newSec = new StringBuilder(section);
-                while (newSec.toString().length() < startLen) {
-                    newSec.append(section);
-                }
-                Long val = Long.parseLong(newSec.toString());
-                if (val <= end && val >= start && !validNums.contains(val)){
-                    System.out.println(range + " " + val);
-                    validNums.add(val);
-                }
-                while (newSec.toString().length() < endLen) {
-                    newSec.append(section);
-                }
-                Long secondVal = Long.parseLong(newSec.toString());
-                if (secondVal != val && secondVal <= end && secondVal >= start && !validNums.contains(secondVal)){
-                    System.out.println(range + " " + val);
+            section = fullRange[0].substring(0, secLen);
+            Long val = 0L;
+
+            while (val <= end) {
+                val = generateLong(section, startLen, start, end);
+                if (val >= start && val <= end && !validNums.contains(val)) {
+                    // System.out.println(range + " " + val);
                     validNums.add(val);
                 }
 
-                if (val > end || secondVal > end) {
-                    inRange = false;
-                } else {
-                    section = String.valueOf(Integer.parseInt(section) + 1);
+                if (endLen > startLen) {
+                    val = generateLong(section, endLen, start, end);
+                    if (val >= start && val <= end && !validNums.contains(val)) {
+                        System.out.println(range + " " + val);
+                        validNums.add(val);
+                    }
                 }
+                section = String.valueOf(Integer.parseInt(section) + 1);
             }
+
             secLen++;
-        } while (section.length() <= endLen/2);
+        } while (secLen <= endLen/2);
 
         for (Long validNum : validNums) {
             sum += validNum;
         }
+    }
+
+    public static Long generateLong(String section, int goalLen, Long start, Long end) {
+        StringBuilder newSec = new StringBuilder(section);
+        do {
+            newSec.append(section);
+        } while (newSec.toString().length() < goalLen);
+        System.out.println(start + "-" + end + " Generated: " + newSec.toString() + (start <= Long.parseLong(newSec.toString()) ? "" : " TOO LOW") + (Long.parseLong(newSec.toString()) <= end ? "" : " TOO HIGH"));
+        return Long.parseLong(newSec.toString());
     }
 
     /*
@@ -86,6 +84,8 @@ public class AoC_2025_02 {
      * 35367539282 PART 1
      * 
      * WRONG
-     * 39918681190 TOO HIGH
+     * 39918681190 PART 1 TOO HIGH
+     * 45753469068 PART 2 TOO LOW
+     * 45753465280 Part 2 TOO LOW
      */
 }
