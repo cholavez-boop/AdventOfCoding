@@ -8,7 +8,7 @@ public class AoC_2025_01 {
     public static int numZ = 0;
     public static int zz = 0;
     public static void main(String[] args) {
-        File myObj = new File("/Users/Lorenzo Galvez/Documents/Work Files/JustCoding/AdventOfCoding/AoCInputs/AOC2025_01.txt");
+        File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2025_01.txt");
         // File myObj = new File("D:/Real Life/Oracle/NonWork/AoC_2025/AdventOfCoding/AoCInputs/AOC2025_01.txt");
 
         ArrayList<String> inputMap = new ArrayList<>();
